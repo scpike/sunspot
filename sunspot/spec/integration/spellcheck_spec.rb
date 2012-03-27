@@ -54,6 +54,26 @@ describe 'spellcheck' do
       end
       search.spellcheck_collation.should == 'java developer'
     end
-  end
 
+    it 'returns Solr collation even when collation is set to false' do
+
+      search = Sunspot.search(Post) do
+        keywords 'developing wava'
+        spellcheck :count => 3, :only_more_popular => true, :collate => false
+      end
+
+      search.spellcheck_suggestion_for("wava").should == "java"
+    end
+    
+    it 'returns Solr collation when collation is set to true' do
+      
+      search = Sunspot.search(Post) do
+        keywords 'developing wava'
+        spellcheck :count => 3, :only_more_popular => true, :collate => true
+      end
+      
+      search.spellcheck_suggestion_for("wava").should == "java"
+    end
+  end
+  
 end
