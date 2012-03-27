@@ -20,12 +20,14 @@ module Sunspot
       # more useful hash.
       #
       # Original: [term, suggestion, term, suggestion, ..., "correctlySpelled", bool, "collation", str]
+      #           "collation" is only included if spellcheck.collation was set to true
       # Returns: { term => suggestion, term => suggestion }
       def spellcheck_suggestions
         unless defined?(@spellcheck_suggestions)
           @spellcheck_suggestions = {}
-          count = (solr_spellcheck['suggestions'].length - 4) / 2
+          count = (solr_spellcheck['suggestions'].length) / 2
           (0..(count - 1)).each do |i|
+            break if ["correctlySpelled", "collation"].include? solr_spellcheck[i]
             term = solr_spellcheck['suggestions'][i * 2]
             suggestion = solr_spellcheck['suggestions'][(i * 2) + 1]
             @spellcheck_suggestions[term] = suggestion
